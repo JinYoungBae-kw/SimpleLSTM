@@ -14,6 +14,19 @@ class SimpleLSTM(nn.Module):
 
         self.hidden_to_output = nn.Linear(hidden_size, output_size)
 
+        self.init_weights()
+
+    def init_weights(self):
+        for gate in [self.forget_gate, self.input_gate, self.cell_gate, self.output_gate]:
+            nn.init.xavier_uniform_(gate.weight)
+            nn.init.zeros_(gate.bias)
+
+        # forget gate의 bias는 1로 설정 (기억 유지)
+        nn.init.constant_(self.forget_gate.bias, 1.0)
+
+        nn.init.xavier_uniform_(self.hidden_to_output.weight)
+        nn.init.zeros_(self.hidden_to_output.bias)
+
     def forward(self, x):
         batch_size, seq_len, _ = x.size()
 
